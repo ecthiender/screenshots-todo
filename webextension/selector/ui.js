@@ -558,6 +558,34 @@ this.ui = (function() { // eslint-disable-line no-unused-vars
         this.copy.style.display = "none";
       }
 
+      // // check box
+      // if (callbacks !== undefined && callbacks.checkBox) {
+      //   this.checkBox.removeAttribute("disabled");
+      //   this.checkBox.onclick = watchFunction(assertIsTrusted((e) => {
+      //     this.checkBox.setAttribute("disabled", true);
+      //     callbacks.checkBox(e);
+      //     e.preventDefault();
+      //     e.stopPropagation();
+      //   }));
+      //   this.checkBox.style.display = "";
+      // } else {
+      //   this.checkBox.style.display = "none";
+      // }
+
+      // // check box
+      // if (callbacks !== undefined && callbacks.textBox) {
+      //   this.textBox.removeAttribute("disabled");
+      //   this.textBox.onclick = watchFunction(assertIsTrusted((e) => {
+      //     this.textBox.setAttribute("disabled", true);
+      //     callbacks.textBox(e);
+      //     e.preventDefault();
+      //     e.stopPropagation();
+      //   }));
+      //   this.textBox.style.display = "";
+      // } else {
+      //   this.textBox.style.display = "none";
+      // }
+
       const winBottom = window.innerHeight;
       const pageYOffset = window.pageYOffset;
 
@@ -645,18 +673,45 @@ this.ui = (function() { // eslint-disable-line no-unused-vars
       copyImg.src = browser.extension.getURL("icons/copy.svg");
       copy.appendChild(copyImg);
       copy.appendChild(copyString);
-      buttons.appendChild(copy);
+      //buttons.appendChild(copy);
+
+      const checkBoxWrap = makeEl("div", "");
+      const checkBox = makeEl("input", "");
+      checkBox.setAttribute("id", "todo-public-checkbox");
+      checkBox.setAttribute("type", "checkbox");
+      checkBoxWrap.appendChild(checkBox);
+      const checkLabel = makeEl("label", "");
+      checkLabel.textContent = "Public";
+      checkLabel.setAttribute("style", "color: #fff");
+      checkBoxWrap.appendChild(checkLabel);
+      buttons.appendChild(checkBoxWrap);
+
+      const annText = makeEl("input", "highlight-button-annText");
+      annText.setAttribute("type", "text");
+      annText.setAttribute("placeholder", "annotate something");
+      //buttons.appendChild(annText);
+
+      //annText.title = "write something";
+      //const annTextImg = makeEl("img");
+      //const annTextString = makeEl("span");
+      //annTextString.textContent = browser.i18n.getMessage("annTextScreenshot");
+      //annTextImg.src = browser.extension.getURL("icons/copy.svg");
+      //annText.appendChild(annTextImg);
+      //annText.appendChild(annTextString);
 
       const download = makeEl("button", "highlight-button-download");
       const downloadImg = makeEl("img");
-      downloadImg.src = browser.extension.getURL("icons/download-white.svg");
+      downloadImg.src = browser.extension.getURL("icons/cloud.svg");
       download.appendChild(downloadImg);
-      download.append(browser.i18n.getMessage("downloadScreenshot"));
+      //const downloadString = browser.i18n.getMessage("downloadScreenshot");
+      download.append("Add to your todo");
       download.title = browser.i18n.getMessage("downloadScreenshotTitle");
       buttons.appendChild(download);
       this.cancel = cancel;
       this.download = download;
       this.copy = copy;
+      this.checkBox = checkBoxWrap;
+      this.textBox = annText;
 
       boxEl.appendChild(buttons);
       for (const name of movements) {

@@ -108,7 +108,7 @@ flake8: $(VENV)
 zip: addon
 	# FIXME: should remove web-ext-artifacts/*.zip first
 	./node_modules/.bin/web-ext build --source-dir webextension/ --ignore-files "**/README.md" --ignore-files "**/*.template"
-	mv web-ext-artifacts/firefox_screenshots*.zip build/screenshots.zip
+	mv web-ext-artifacts/screenshots_todo*.zip build/screenshots.zip
 	# We'll try to remove this directory, but it's no big deal if we can't:
 	rmdir web-ext-artifacts || true
 

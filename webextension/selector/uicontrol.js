@@ -98,9 +98,11 @@ this.uicontrol = (function() {
 
   function downloadShot() {
     const previewDataUrl = (captureType === "fullPageTruncated") ? null : dataUrl;
+    console.log('checkbox elelllll', document.querySelector('#todo-public-checkbox'));
+    const isPublic = ui.Box.checkBox.firstChild.checked;
     // Downloaded shots don't have dimension limits
     removeDimensionLimitsOnFullPageShot();
-    shooter.downloadShot(selectedPos, previewDataUrl, captureType);
+    shooter.downloadShot(selectedPos, previewDataUrl, captureType, isPublic);
   }
 
   function copyShot() {

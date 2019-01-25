@@ -1,5 +1,10 @@
 /* globals global, documentMetadata, util, uicontrol, ui, catcher */
-/* globals buildSettings, domainFromUrl, randomString, shot, blobConverters */
+/* globals buildSettings, domainFromUrl, randomString, shot, blobConverters, makeUuid */
+
+GQL_URL = 'https://hackasura-av.herokuapp.com/v1alpha1/graphql';
+
+TOKEN = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6Ik16QXdSRGxCUTBNelF6VXpSRE0wUVVSRk1ETXpNRE0zUkVJek9UazVOelkzUlRsRU9UZERSUSJ9.eyJodHRwczovL2hhc3VyYS5pby9qd3QvY2xhaW1zIjp7IngtaGFzdXJhLWRlZmF1bHQtcm9sZSI6InVzZXIiLCJ4LWhhc3VyYS1hbGxvd2VkLXJvbGVzIjpbInVzZXIiXSwieC1oYXN1cmEtdXNlci1pZCI6ImF1dGgwfDVjNGFmNzBmNTE3OWRlMGMwODEwMjc4OCJ9LCJuaWNrbmFtZSI6InZhbXNoaSIsIm5hbWUiOiJ2YW1zaGlAaGFzdXJhLmlvIiwicGljdHVyZSI6Imh0dHBzOi8vcy5ncmF2YXRhci5jb20vYXZhdGFyLzUwOWVmN2RjYTk4ZDczZTExNDc4ZDc3MGRjODVmMmRkP3M9NDgwJnI9cGcmZD1odHRwcyUzQSUyRiUyRmNkbi5hdXRoMC5jb20lMkZhdmF0YXJzJTJGdmEucG5nIiwidXBkYXRlZF9hdCI6IjIwMTktMDEtMjVUMTI6MDI6MDIuMTA0WiIsImlzcyI6Imh0dHBzOi8vaGFja2FzdXJhLWF2LmV1LmF1dGgwLmNvbS8iLCJzdWIiOiJhdXRoMHw1YzRhZjcwZjUxNzlkZTBjMDgxMDI3ODgiLCJhdWQiOiJTaENUM2VOUEdUM0FHbjdBMDdKVHhiRzBjU1FaRXF4MCIsImlhdCI6MTU0ODQxNzcyMiwiZXhwIjoxNTQ4NDUzNzIyLCJhdF9oYXNoIjoib0J1U1BzX3RJMDVJWWU5QlpNZi1IZyIsIm5vbmNlIjoiUVhCSjhZVjFLS3ctb3VYRE13cGZOSEcwaVFrdDdmWmgifQ.UpcgYfJa6A7gT6SXw0FJOWCROEgWoL5iPCFOMSEAXE8Z7N36tO2Er6LbrGz5qROjcmUSg0GoFs3AEeRdBDyJ_4bf1psD6bwCJsZcGSYGY1kH7OFglJe2BxL2c4T_D5PFmAOgkV3ft5XVRQqk-16bQhcePA7R40vtQRfEqJOtixtMtrTy3xp5Y8UwZOOikIbR1H1pYAwQm8Uaag9ctfqPOIJKeb5x9OmfTo_N7Rw3sd9PPX-En4zlTmVTtQSTodHxq5pK22_Cy5ATSMfxZRX-5LDSEYLGZYuyeQNbLZ0-tsBPO42YGD-7H1TizlJG233yKwOxFPxcAS0SvqtLHlKb5Q';
+
 
 "use strict";
 
@@ -194,7 +199,37 @@ this.shooter = (function() { // eslint-disable-line no-unused-vars
     }));
   };
 
-  exports.downloadShot = function(selectedPos, previewDataUrl, type) {
+  const insertTodoQ = `
+    mutation addTodo($text: String, $image: String, $isPublic: Boolean) {
+      insert_todos(objects: [{
+        text: $text,
+        image: $image,
+        is_public: $isPublic
+      }]) {
+        affected_rows
+      }
+    } `;
+
+  const saveToHasura = (dataUrl, isPublic) => {
+    const options = {
+      method: 'POST',
+      body: JSON.stringify({
+        query: insertTodoQ,
+        variables: {
+          image: dataUrl,
+          isPublic: isPublic
+        }
+      }),
+      headers: {
+        'content-type': 'application/json',
+        'authorization': `Bearer ${TOKEN}`
+      }
+    };
+    return window.fetch(GQL_URL, options)
+      .then((resp) => resp.json());
+  };
+
+  exports.downloadShot = function(selectedPos, previewDataUrl, type, isNotePublic) {
     const shotPromise = previewDataUrl ? Promise.resolve(previewDataUrl) : screenshotPageAsync(selectedPos, type);
     catcher.watchPromise(shotPromise.then(dataUrl => {
       let promise = Promise.resolve(dataUrl);
@@ -221,8 +256,18 @@ this.shooter = (function() { // eslint-disable-line no-unused-vars
             location: selectedPos,
           },
         });
-        ui.triggerDownload(dataUrl, shotObject.filename);
-        uicontrol.deactivate();
+        saveToHasura(dataUrl, isNotePublic)
+          .then((data) => {
+            // ui.triggerDownload(dataUrl, shotObject.filename);
+            console.log(data);
+            uicontrol.deactivate();
+            console.log(browser.notifications);
+            browser.notifications.create(makeUuid(), {
+              type: "basic",
+              title: "Saved!",
+              message: "Your note is saved"
+            });
+          });
       }));
     }));
   };
@@ -281,3 +326,5 @@ this.shooter = (function() { // eslint-disable-line no-unused-vars
   return exports;
 })();
 null;
+
+

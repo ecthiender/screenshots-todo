@@ -39,7 +39,7 @@ this.startBackground = (function() {
     "background/main.js",
   ];
 
-  browser.pageAction.onClicked.addListener(tab => {
+  browser.browserAction.onClicked.addListener(tab => {
     loadIfNecessary().then(() => {
       main.onClicked(tab);
     }).catch(error => {
@@ -62,21 +62,21 @@ this.startBackground = (function() {
     });
   });
 
-  browser.commands.onCommand.addListener((cmd) => {
-    if (cmd !== "take-screenshot") {
-      return;
-    }
-    loadIfNecessary().then(() => {
-      browser.tabs.query({currentWindow: true, active: true}).then((tabs) => {
-        const activeTab = tabs[0];
-        main.onCommand(activeTab);
-      }).catch((error) => {
-        throw error;
-      });
-    }).catch((error) => {
-      console.error("Error toggling Screenshots via keyboard shortcut: ", error);
-    });
-  });
+  // browser.commands.onCommand.addListener((cmd) => {
+  //   if (cmd !== "take-screenshot") {
+  //     return;
+  //   }
+  //   loadIfNecessary().then(() => {
+  //     browser.tabs.query({currentWindow: true, active: true}).then((tabs) => {
+  //       const activeTab = tabs[0];
+  //       main.onCommand(activeTab);
+  //     }).catch((error) => {
+  //       throw error;
+  //     });
+  //   }).catch((error) => {
+  //     console.error("Error toggling Screenshots via keyboard shortcut: ", error);
+  //   });
+  // });
 
   browser.runtime.onMessage.addListener((req, sender, sendResponse) => {
     loadIfNecessary().then(() => {

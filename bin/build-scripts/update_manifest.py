@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 """
 Sets the version parameter in webextension/manifest.json using a date and package.json
 Sets the backend value

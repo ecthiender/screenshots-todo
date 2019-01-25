@@ -1,14 +1,14 @@
 {
   "manifest_version": 2,
-  "name": "Firefox Screenshots",
+  "name": "Screenshots Todo",
   "version": "__VERSION__",
-  "description": "__MSG_addonDescription__",
-  "author": "__MSG_addonAuthorsList__",
+  "description": "Select any browser element and add it to your todo list",
+  "author": "Vamshi Surabhi, Anon Ray",
   "homepage_url": "https://github.com/mozilla-services/screenshots",
   "incognito": "spanning",
   "applications": {
     "gecko": {
-      "id": "screenshots@mozilla.org",
+      "id": "screenshotstodo@hasura.io",
       "strict_min_version": "57.0a1"
     }
   },
@@ -18,14 +18,6 @@
       "build/buildSettings.js",
       "background/startBackground.js"
     ]
-  },
-  "commands": {
-    "take-screenshot": {
-      "suggested_key": {
-        "default": "Ctrl+Shift+S"
-      },
-      "description": "Open the Firefox Screenshots UI"
-    }
   },
   "content_scripts": [
     {
@@ -39,14 +31,12 @@
       ]
     }
   ],
-  "page_action": {
+  "browser_action": {
     "browser_style": true,
     "default_icon" : {
       "32": "icons/icon-v2.svg"
     },
-    "default_title": "__MSG_contextMenuLabel__",
-    "show_matches": ["<all_urls>"],
-    "pinned": false
+    "default_title": "Add to your Screenshots Todo"
   },
   "icons": {
     "32": "icons/icon-v2.svg"
